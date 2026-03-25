@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Happy Birthday · Heartfelt memories</title>
+    <!-- Font Awesome 6 (free) for hearts & icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 10%, #660000, #2c0101 70%, #1a0000);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------- bokeh lights background ---------- */
+        .bokeh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bokeh span {
+            position: absolute;
+            width: 6vmax;
+            height: 6vmax;
+            border-radius: 50%;
+            background: rgba(255, 140, 140, 0.15);
+            filter: blur(30px);
+            animation: floatBokeh 20s infinite alternate ease-in-out;
+        }
+        .bokeh span:nth-child(1) { top: 10%; left: 15%; width: 15vmax; height: 15vmax; background: rgba(255, 80, 80, 0.1); animation-duration: 25s; }
+        .bokeh span:nth-child(2) { bottom: 20%; right: 10%; width: 20vmax; height: 20vmax; background: rgba(200, 30, 30, 0.12); filter: blur(40px); animation-duration: 30s; }
+        .bokeh span:nth-child(3) { top: 40%; left: 70%; width: 10vmax; height: 10vmax; background: rgba(255, 120, 120, 0.18); filter: blur(25px); }
+        .bokeh span:nth-child(4) { bottom: 5%; left: 20%; width: 25vmax; height: 25vmax; background: rgba(150, 20, 20, 0.08); filter: blur(60px); animation-duration: 35s; }
+
+        /* ---------- string fairy lights (top) ---------- */
+        .fairy-lights {
+            position: relative;
+            width: 100%;
+            height: 70px;
+            z-index: 5;
+            margin-top: -10px;
+            pointer-events: none;
+        }
+        .light-rope {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffc9c9, #ffa5a5, #ff6f6f, #ffa5a5, #ffc9c9, transparent);
+            top: 30px;
+            box-shadow: 0 0 8px #ff6f6f;
+        }
+        .light-bulb {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #ffcfcf;
+            border-radius: 50%;
+            top: 23px;
+            left: 0;
+            box-shadow: 0 0 20px #ff3b3b, 0 0 40px #ffa5a5;
+            animation: flicker 2s infinite alternate;
+        }
+        .light-bulb::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: #ad6b35;
+            top: 12px;
+            left: 5px;
+            border-radius: 2px;
+        }
+        /* distribute bulbs */
+        .bulb1 { left: 8%; animation-delay: 0.2s; }
+        .bulb2 { left: 22%; animation-delay: 0.7s; }
+        .bulb3 { left: 38%; animation-delay: 0.1s; }
+        .bulb4 { left: 54%; animation-delay: 1.2s; }
+        .bulb5 { left: 70%; animation-delay: 0.5s; }
+        .bulb6 { left: 86%; animation-delay: 0.9s; }
+
+        @keyframes flicker {
+            0% { opacity: 0.7; box-shadow: 0 0 15px #ff7a7a, 0 0 30px #ffb3b3; }
+            100% { opacity: 1; box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff9999; }
+        }
+
+        /* main container */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+
+        /* ----- header (typing & glow) ----- */
+        .header-title {
+            text-align: center;
+            margin: 10px 0 20px;
+            padding: 20px 0;
+        }
+        .birthday-message {
+            font-family: 'Dancing Script', 'Brush Script MT', cursive, sans-serif;
+            font-size: clamp(2.6rem, 15vw, 5.2rem);
+            color: #fff1e6;
+            text-shadow: 0 0 8px #ff7b7b, 0 0 20px #ff3b3b, 0 0 30px #b30000;
+            letter-spacing: 2px;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 4px solid #ffb3b3;
+            width: 0;
+            animation: typing 4s steps(30, end) forwards, blinkCursor 1s step-end infinite, glowPulse 3s infinite alternate;
+            max-width: fit-content;
+            margin: 0 auto;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blinkCursor {
+            0%, 100% { border-color: #ffb3b3; }
+            50% { border-color: transparent; }
+        }
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 5px #ff9999, 0 0 15px #ff4d4d; }
+            100% { text-shadow: 0 0 15px #ffcccc, 0 0 40px #ff1a1a, 0 0 70px #ff6666; }
+        }
+
+        /* gallery section */
+        .section-heading {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.8rem;
+            color: #ffd6d6;
+            text-align: center;
+            margin: 50px 0 20px;
+            text-shadow: 0 0 10px #ff5e5e;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            padding: 15px 5px;
+        }
+        .memory-photo {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.7);
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeZoomIn 1s ease backwards, float 6s infinite alternate;
+            transform-origin: center;
+        }
+        .memory-photo:nth-child(1) { animation-delay: 0.2s; }
+        .memory-photo:nth-child(2) { animation-delay: 0.5s; }
+        .memory-photo:nth-child(3) { animation-delay: 0.8s; }
+        .memory-photo:nth-child(4) { animation-delay: 1.1s; }
+        .memory-photo:nth-child(5) { animation-delay: 1.4s; }
+        .memory-photo:nth-child(6) { animation-delay: 1.7s; }
+
+        @keyframes fadeZoomIn {
+            0% { opacity: 0; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .memory-photo:hover {
+            transform: scale(1.02) rotate(1.5deg);
+            box-shadow: 0 25px 40px #b30000;
+        }
+        .memory-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s;
+        }
+        .memory-photo:hover img {
+            transform: scale(1.1);
+        }
+
+        /* lightbox modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 0, 0, 0.95);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(7px);
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 20px;
+            border: 4px solid #ffa0a0;
+            box-shadow: 0 0 50px #ff4d4d;
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 50px;
+            color: #ffc3c3;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .close-lightbox:hover {
+            color: #ff1313;
+            transform: scale(1.2);
+        }
+
+        /* wishes cards */
+        .wishes-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .wish-card {
+            background: rgba(50, 8, 8, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid #b33b3b;
+            border-radius: 60px 20px 60px 20px;
+            padding: 25px 35px;
+            max-width: 300px;
+            color: #ffe1e1;
+            font-size: 1.5rem;
+            font-family: 'Patrick Hand', cursive;
+            text-align: center;
+            box-shadow: 0 10px 30px #3a0101;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.9s, transform 0.9s;
+            border-left: 8px solid #ff8888;
+        }
+        .wish-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .wish-card i {
+            color: #ff5e5e;
+            margin-right: 10px;
+        }
+
+        /* music player + file upload */
+        .music-section {
+            background: rgba(70, 10, 10, 0.5);
+            backdrop-filter: blur(6px);
+            border-radius: 80px 20px 80px 20px;
+            padding: 25px 20px;
+            margin: 50px auto 30px;
+            max-width: 550px;
+            border: 1px solid #ff8080;
+            box-shadow: 0 0 40px #990000;
+        }
+        .music-label {
+            font-size: 2rem;
+            color: #ffbfbf;
+            text-align: center;
+            font-family: 'Pacifico', cursive;
+        }
+        audio {
+            width: 100%;
+            margin: 15px 0;
+            border-radius: 50px;
+            outline: none;
+        }
+        .file-upload {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: #410000;
+            padding: 12px 20px;
+            border-radius: 40px;
+            color: #ffcbcb;
+            border: 1px dashed #ff6f6f;
+        }
+        .file-upload i {
+            font-size: 28px;
+            color: #ff8080;
+        }
+        #musicFile {
+            color: white;
+            max-width: 200px;
+        }
+        input[type="file"]::file-selector-button {
+            background: #a52a2a;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 40px;
+            font-weight: bold;
+        }
+
+        /* heart balloons (3D style floating) */
+        .balloon-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 25;
+            overflow: hidden;
+        }
+        .heart-balloon {
+            position: absolute;
+            bottom: -100px;
+            font-size: 2.8rem;
+            color: #ff3b3b;
+            text-shadow: 0 0 15px #ffa0a0, 0 8px 15px rgba(0,0,0,0.3);
+            filter: drop-shadow(0 0 8px #ff3b3b);
+            animation: floatUp 12s linear infinite;
+            transform-origin: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .heart-balloon::after {
+            content: '';
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(45deg, #c9a96b, #7a4f1a);
+            display: block;
+            margin-top: -8px;
+            box-shadow: 0 0 6px #ffd58c;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(12deg) scale(1.3); opacity: 0.2; }
+        }
+        /* many balloons with random left */
+        .balloon1 { left: 8%; animation-duration: 13s; animation-delay: 0s; font-size: 3rem; }
+        .balloon2 { left: 22%; animation-duration: 16s; animation-delay: 2s; font-size: 2.2rem; }
+        .balloon3 { left: 40%; animation-duration: 11s; animation-delay: 1s; font-size: 3.5rem; }
+        .balloon4 { left: 60%; animation-duration: 15s; animation-delay: 3s; font-size: 2.5rem; }
+        .balloon5 { left: 75%; animation-duration: 18s; animation-delay: 0.5s; font-size: 3rem; }
+        .balloon6 { left: 90%; animation-duration: 12s; animation-delay: 4s; font-size: 2rem; }
+        .balloon7 { left: 48%; animation-duration: 20s; animation-delay: 6s; font-size: 4rem; }
+        .balloon8 { left: 15%; animation-duration: 14s; animation-delay: 5s; font-size: 2.8rem; }
+
+        /* floating tiny hearts (sparkles) */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .floating-hearts i {
+            position: absolute;
+            color: rgba(255, 120, 120, 0.5);
+            font-size: 1.4rem;
+            animation: sparkle 8s linear infinite;
+            filter: drop-shadow(0 0 4px red);
+        }
+        @keyframes sparkle {
+            0% { transform: translateY(110vh) scale(0.3); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+        }
+
+        /* responsiveness */
+        @media (max-width: 600px) {
+            .birthday-message { font-size: 3rem; white-space: normal; border-right: none; animation: none; width: 100%; }
+            .gallery-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .wish-card { font-size: 1.3rem; max-width: 100%; }
+            .music-section { max-width: 95%; }
+        }
+        @media (max-width: 380px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+
+        /* scroll offset */
+        .footer-note {
+            text-align: center;
+            color: #a55;
+            margin: 50px 0 10px;
+            font-style: italic;
+        }
+    </style>
+    <!-- Google Fonts for script style -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Great+Vibes&family=Pacifico&family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- bokeh background -->
+    <div class="bokeh">
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- top fairy lights -->
+    <div class="fairy-lights">
+        <div class="light-rope"></div>
+        <div class="light-bulb bulb1"></div>
+        <div class="light-bulb bulb2"></div>
+        <div class="light-bulb bulb3"></div>
+        <div class="light-bulb bulb4"></div>
+        <div class="light-bulb bulb5"></div>
+        <div class="light-bulb bulb6"></div>
+    </div>
+
+    <!-- main content -->
+    <div class="content">
+        <!-- header with typing effect -->
+        <div class="header-title">
+            <div class="birthday-message" id="birthdayMsg">Happy Birthday Shristi..!!</div>
+        </div>
+
+        <!-- gallery section -->
+        <h2 class="section-heading"><i class="fa-solid fa-heart" style="color: #ff6f6f;"></i> Sweet memories</h2>
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- using unsplash images with friends / memories -->
+            <div class="memory-photo" data-src="img/6.jpeg"><img src="img/6.jpeg" alt="friends 1" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/7.jpeg"><img src="img/7.jpeg" alt="friends 2" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/8.jpeg"><img src="img/8.jpeg" alt="friends 3" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/9.jpeg"><img src="img/9.jpeg" alt="friends 4" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/10.jpeg"><img src="img/10.jpeg" alt="friends 5" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/11.jpeg"><img src="img/11.jpeg" alt="friends 6" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/12.jpeg"><img src="img/12.jpeg" alt="friends 6" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/13.jpeg"><img src="img/13.jpeg" alt="friends 6" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/14.jpeg"><img src="img/14.jpeg" alt="friends 6" loading="lazy"></div>
+            <div class="memory-photo" data-src="img/15.jpeg"><img src="img/15.jpeg" alt="friends 6" loading="lazy"></div>
+        </div>
+
+        <!-- birthday wishes (scroll animation) -->
+        <h2 class="section-heading"><i class="fa-regular fa-heart"></i> Heartfelt wishes</h2>
+        <div class="wishes-container">
+            <div class="wish-card" data-scroll><i class="fa-solid fa-star"></i> Thank you for the beautiful memories.</div>
+            <div class="wish-card" data-scroll><i class="fa-solid fa-cake-candles"></i> Friends like you make life special.</div>
+            <div class="wish-card" data-scroll><i class="fa-solid fa-champagne-glasses"></i> Happy Birthday! May your life be filled with happiness.</div>
+            <div class="wish-card" data-scroll><i class="fa-regular fa-gem"></i> Every moment with you is a treasure.</div>
+        </div>
+
+        <!-- music player + replace file -->
+        
+        <div class="footer-note">— endless love & celebrations —</div>
+            <audio  autoplay>
+                <source src="audio.mp3" type="audio/mpeg">
+                Your browser does not support audio.
+            </audio>
+        
+         
+        </div>
+    </div>
+
+    <!-- lightbox modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-lightbox" id="closeLightbox">&times;</span>
+        <img id="lightboxImg" src="" alt="">
+    </div>
+
+    <!-- 3D heart balloons (floating) -->
+    <div class="balloon-container">
+        <div class="heart-balloon balloon1"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon2"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon3"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon4"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon5"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon6"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon7"><i class="fa-solid fa-heart"></i></div>
+        <div class="heart-balloon balloon8"><i class="fa-solid fa-heart"></i></div>
+    </div>
+
+    <!-- floating tiny hearts (sparkle effect) -->
+    <div class="floating-hearts">
+        <i class="fa-solid fa-heart" style="left: 12%; top: 20%; font-size: 1rem; animation-delay: 0s;"></i>
+        <i class="fa-solid fa-heart" style="left: 43%; top: 70%; font-size: 1.8rem; animation-delay: 3s;"></i>
+        <i class="fa-solid fa-heart" style="left: 78%; top: 10%; font-size: 1.3rem; animation-delay: 1.5s;"></i>
+        <i class="fa-solid fa-heart" style="left: 27%; top: 50%; font-size: 2rem; animation-delay: 5s;"></i>
+        <i class="fa-solid fa-heart" style="left: 62%; top: 30%; font-size: 1.6rem; animation-delay: 2s;"></i>
+        <i class="fa-solid fa-heart" style="left: 91%; top: 85%; font-size: 2.2rem; animation-delay: 4s;"></i>
+        <i class="fa-solid fa-heart" style="left: 5%; top: 95%; font-size: 1rem; animation-delay: 6s;"></i>
+    </div>
+
+
+
+<audio id="bgMusic" loop></audio>
+
+    <script>
+        (function() {
+            // Lightbox functionality
+            const photos = document.querySelectorAll('.memory-photo');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const closeBtn = document.getElementById('closeLightbox');
+
+            photos.forEach(photo => {
+                photo.addEventListener('click', function(e) {
+                    const src = this.getAttribute('data-src'); // high-res
+                    if (src) {
+                        lightboxImg.src = src;
+                        lightbox.classList.add('active');
+                    }
+                });
+            });
+
+            closeBtn.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+            });
+
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    lightbox.classList.remove('active');
+                }
+            });
+
+            // Scroll animation for wishes (Intersection Observer)
+            const wishCards = document.querySelectorAll('.wish-card[data-scroll]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.3, rootMargin: '20px' });
+            wishCards.forEach(card => observer.observe(card));
+
+            // manually trigger first load in case they're already visible
+            wishCards.forEach(card => { if (card.getBoundingClientRect().top < window.innerHeight) card.classList.add('visible'); });
+
+            // music file replace
+            const audioPlayer = document.getElementById('customAudio');
+            const fileInput = document.getElementById('musicFile');
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('audio/')) {
+                    const url = URL.createObjectURL(file);
+                    audioPlayer.src = url;
+                    audioPlayer.load();
+                    audioPlayer.play().catch(e => console.log('autoplay blocked'));
+                } else {
+                    alert('Please choose an audio file (MP3, WAV, etc.)');
+                }
+            });
+
+            // Optional: prefill with sample but user can replace
+
+            // fix for typing animation on small screen: make border disappear because we set white-space: nowrap. but on small we disabled animation. it's okay.
+            // also adjust balloons not to overlap content too much (pointer-events none already)
+        })();
+    </script>
+
+    <!-- additional style for audio element (webkit) -->
+    <style>
+        audio::-webkit-media-controls-panel { background-color: #ffc9c9; }
+        audio::-webkit-media-controls-play-button { background-color: #ff4d4d; border-radius: 50%; }
+        audio { background: #330000; border-radius: 40px; }
+        .file-upload label { cursor: pointer; }
+        #musicFile { background: #521212; border-radius: 30px; padding: 5px; }
+        .wish-card.visible { transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.8s ease; }
+    </style>
+</body>
+</html>

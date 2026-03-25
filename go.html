@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>✨ Celestial Valentine · Escape the No Button ✨</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 30% 40%, #1a0b2e, #0f051f);
+      font-family: 'Segoe UI', 'Quicksand', system-ui, 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27" viewBox="0 0 24 27"><polygon points="2,2 22,13 12,16 2,25" fill="%23ff88cc" stroke="%23ff2a6d" stroke-width="1.5"/><circle cx="12" cy="13" r="2" fill="white"/></svg>') 12 5, auto;
+    }
+
+    /* magical floating stars & hearts */
+    .magic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star, .heart {
+      position: absolute;
+      color: rgba(255, 220, 255, 0.6);
+      font-size: clamp(12px, 3vw, 26px);
+      animation: floatTwinkle 8s infinite ease-in-out;
+      filter: drop-shadow(0 0 4px #ffb7fa);
+    }
+
+    @keyframes floatTwinkle {
+      0% { transform: translateY(0vh) rotate(0deg); opacity: 0.2; }
+      50% { opacity: 0.9; transform: translateY(-15px) rotate(8deg); }
+      100% { transform: translateY(0vh) rotate(0deg); opacity: 0.2; }
+    }
+
+    /* main card */
+    .valentine-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(20, 5, 45, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 64px 48px 80px 48px;
+      padding: 2rem 2.5rem;
+      max-width: 650px;
+      width: 90%;
+      margin: 1.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 160, 210, 0.4), 0 0 20px #ff99dd88;
+      border: 1px solid rgba(255, 200, 240, 0.5);
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+
+
+    .question {
+    font-size: 2.3rem;
+      background: linear-gradient(135deg, #FFD6F5, #FFB3E6, #E0B3FF);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .question span {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.1); opacity: 1; }
+    }
+
+    /* timer & hint area */
+    .info-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 60px;
+      padding: 8px 20px;
+      margin: 15px 0 20px;
+      backdrop-filter: blur(4px);
+    }
+
+  
+
+   
+
+    .hint-bubble {
+      background: #ffecb3;
+      color: #6a1b9a;
+      padding: 6px 15px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: gentleWobble 1s ease;
+    }
+
+    /* Yes button container (hidden initially) */
+    .yes-container {
+      margin: 25px 0 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-yes {
+      background: linear-gradient(145deg, #ff4d8c, #ff1e6c);
+      border: none;
+      padding: 14px 38px;
+      font-size: 1.7rem;
+      font-weight: bold;
+      border-radius: 60px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(255, 30, 108, 0.4), 0 0 10px #ffa3d0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      letter-spacing: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.05);
+      box-shadow: 0 18px 28px #ff1e6c66;
+      background: linear-gradient(145deg, #ff639f, #ff005c);
+    }
+
+    /* NO button (fixed position, playful moving) */
+    .no-btn {
+      position: fixed;
+      z-index: 200;
+      background: linear-gradient(135deg, #8b5cf6, #c084fc);
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), 0 0 0 2px #f0b0ff;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+    }
+
+    .no-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* stationary mode after timer */
+    .no-btn.stationary {
+      background: linear-gradient(135deg, #a78bfa, #e879f9);
+      box-shadow: 0 0 15px #ff99ff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .no-btn.stationary:hover {
+      transform: scale(1.02);
+      background: linear-gradient(135deg, #c4b5fd, #f0abfc);
+    }
+
+    /* surprise message */
+    .surprise-message {
+      margin: 20px 0 10px;
+      font-size: 1.2rem;
+      background: rgba(255, 215, 245, 0.2);
+      border-radius: 50px;
+      padding: 8px 16px;
+      display: inline-block;
+      backdrop-filter: blur(6px);
+      color: #FFE5B4;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    /* footer / emoji row */
+    .footer-emoji {
+      margin-top: 20px;
+      font-size: 1.6rem;
+      opacity: 0.7;
+      letter-spacing: 8px;
+    }
+
+    /* responsive adjustments */
+    @media (max-width: 550px) {
+      .valentine-card {
+        padding: 1.5rem;
+      }
+      .question {
+        font-size: 1.6rem;
+      }
+      .btn-yes {
+        font-size: 1.3rem;
+        padding: 10px 26px;
+      }
+      .no-btn {
+        padding: 8px 20px;
+        font-size: 1.2rem;
+      }
+      .timer-box {
+        font-size: 1rem;
+      }
+    }
+
+    /* funny animations */
+    @keyframes gentleWobble {
+      0% { transform: translateX(0px);}
+      25% { transform: translateX(-6px);}
+      75% { transform: translateX(6px);}
+      100% { transform: translateX(0);}
+    }
+
+    .shake-effect {
+      animation: shake 0.3s ease-in-out 0s 2;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px);}
+      25% { transform: translate(-2px, 0px);}
+      50% { transform: translate(2px, -1px);}
+      75% { transform: translate(-1px, 1px);}
+      100% { transform: translate(0,0);}
+    }
+  </style>
+</head>
+<body>
+
+<div class="magic-bg" id="magicBg"></div>
+
+<div class="valentine-card">
+  
+  <div class="question">
+    <span>💖</span>✨ Do you want to go to the next page?✨ <span>💘</span>
+  </div>
+
+  <div class="info-panel">
+    
+    <div class="hint-bubble" id="hintMessage">
+      💫 Hint: chase the "No" button!
+    </div>
+  </div>
+
+  <!-- YES button hidden initially -->
+  <div class="yes-container" id="yesContainer" style="display: none;">
+    <button class="btn-yes" id="yesButton">💘 YES, let's go! 💘</button>
+  </div>
+
+  <!-- Surprise message area -->
+  <div id="surpriseMsg" class="surprise-message"></div>
+</div>
+
+<!-- The tricky NO button (floating) -->
+<button id="noButton" class="no-btn"> NO way! </button>
+
+<script>
+  (function() {
+    // DOM elements
+    const noBtn = document.getElementById('noButton');
+    const yesContainer = document.getElementById('yesContainer');
+    const yesBtn = document.getElementById('yesButton');
+    const countdownSpan = document.getElementById('countdownDisplay');
+    const surpriseDiv = document.getElementById('surpriseMsg');
+    const hintDiv = document.getElementById('hintMessage');
+
+    // State variables
+    let movingEnabled = true;         // button runs away on hover/click
+    let timerSeconds = 30;
+    let timerInterval = null;
+    let yesRevealed = false;           // to avoid double reveal
+    let noClickedAfterTimer = false;    // to track final click
+
+    // Helper: random position for NO button (viewport aware)
+    function moveButtonRandomly() {
+      if (!movingEnabled) return;       // no movement after timer ends
+      const btnRect = noBtn.getBoundingClientRect();
+      const btnWidth = btnRect.width;
+      const btnHeight = btnRect.height;
+      
+      const maxLeft = window.innerWidth - btnWidth - 10;
+      const maxTop = window.innerHeight - btnHeight - 10;
+      // keep within safe zone (avoid edges)
+      const left = Math.max(8, Math.random() * maxLeft);
+      const top = Math.max(8, Math.random() * maxTop);
+      
+      noBtn.style.transition = "all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1)";
+      noBtn.style.left = left + "px";
+      noBtn.style.top = top + "px";
+      noBtn.style.position = "fixed";
+      // optional playful emoji flash effect
+      noBtn.classList.add('shake-effect');
+      setTimeout(() => noBtn.classList.remove('shake-effect'), 300);
+    }
+
+    // set initial position for No button (centered near bottom but not overlapping card)
+    function setInitialNoPosition() {
+      noBtn.style.position = "fixed";
+      const cardRect = document.querySelector('.valentine-card').getBoundingClientRect();
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      let left = (window.innerWidth / 2) - (btnWidth / 2);
+      let top = cardRect.bottom + 20;
+      if (top + btnHeight > window.innerHeight - 20) {
+        top = window.innerHeight - btnHeight - 20;
+      }
+      if (left < 10) left = 10;
+      if (left + btnWidth > window.innerWidth - 10) left = window.innerWidth - btnWidth - 10;
+      noBtn.style.left = left + "px";
+      noBtn.style.top = top + "px";
+    }
+
+    // Handler for hover / click movement (only while movingEnabled true)
+    function onEscapeAction(e) {
+      if (movingEnabled) {
+        e.preventDefault();
+        moveButtonRandomly();
+        // optional: add tiny sparkle effect on button text
+        noBtn.style.transform = "scale(0.98)";
+        setTimeout(() => { if(noBtn) noBtn.style.transform = ""; }, 120);
+      }
+    }
+
+    // FINAL click on No button (after timer ends)
+    function onFinalNoClick() {
+      if (movingEnabled) {
+        // if moving enabled, just move away (already handled in click listener)
+        // but we prevent reveal
+        return;
+      }
+      // after timer, and moving is false -> reveal Yes (only once)
+      if (!yesRevealed && !movingEnabled) {
+        revealYesButton();
+      }
+    }
+
+    // Reveal Yes button, funny message, disable further No antics
+    function revealYesButton() {
+      if (yesRevealed) return;
+      yesRevealed = true;
+      
+      // show yes container with animation
+      yesContainer.style.display = "block";
+      yesContainer.style.animation = "gentleWobble 0.4s ease";
+      
+      
+      
+      // also add extra floating hearts in bg
+      createConfettiHeart();
+      
+      // update hint area to be cheerful
+      hintDiv.innerHTML = "💖 YAY! The YES button is ready! Click it → 💖";
+      hintDiv.style.background = "#ffccee";
+      hintDiv.style.color = "#a1225a";
+    }
+    
+    // simple heart rain/confetti effect when yes appears
+    function createConfettiHeart() {
+      for (let i = 0; i < 12; i++) {
+        let heart = document.createElement('div');
+        heart.innerHTML = ['💖','💗','💘','💝','💕','✨','🌟'][Math.floor(Math.random()*7)];
+        heart.style.position = 'fixed';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.top = '-30px';
+        heart.style.fontSize = (20 + Math.random() * 25) + 'px';
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '999';
+        heart.style.opacity = '0.8';
+        heart.style.transition = 'all 2.5s ease-out';
+        document.body.appendChild(heart);
+        setTimeout(() => {
+          heart.style.top = window.innerHeight + 'px';
+          heart.style.transform = 'rotate(20deg)';
+          heart.style.opacity = '0';
+        }, 20);
+        setTimeout(() => heart.remove(), 2800);
+      }
+    }
+    
+    // Countdown logic: 30 seconds, after that disable movement
+    function startCountdown() {
+      timerInterval = setInterval(() => {
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          // DISABLE MOVEMENT
+          movingEnabled = false;
+          countdownSpan.innerText = "0";
+          // Change No button style to "stationary"
+          noBtn.classList.add('stationary');
+          noBtn.style.transition = "all 0.2s";
+          // also update hint text
+          hintDiv.innerHTML = "💗 TIME'S UP! The NO button is now CLICKABLE! 💗";
+          hintDiv.style.background = "#ffe0b5";
+          hintDiv.style.color = "#b34180";
+          // make sure button no longer moves
+          // (mouseenter/click movement removed via movingEnabled flag)
+          // add subtle glowing effect
+          noBtn.style.boxShadow = "0 0 18px #ffb3ff, 0 0 5px #ff66cc";
+          
+          // additional message for clarity
+          const timerMsg = document.createElement('div');
+          // not needed but optional flash
+          return;
+        }
+        timerSeconds--;
+        countdownSpan.innerText = timerSeconds;
+        // if 5 seconds left, add playful tick
+        if (timerSeconds <= 5 && timerSeconds > 0) {
+          countdownSpan.style.animation = "pulse 0.6s infinite";
+        } else {
+          countdownSpan.style.animation = "";
+        }
+      }, 1000);
+    }
+    
+    // show initial hint after delay (popup-like)
+    function showInitialHint() {
+      setTimeout(() => {
+        hintDiv.innerHTML = "💡 Hint:  click 'NO'";
+        hintDiv.style.background = "#fff0cc";
+        hintDiv.style.color = "#b22277";
+        hintDiv.style.transform = "scale(1.02)";
+        setTimeout(() => {
+          if (hintDiv && !yesRevealed) {
+            hintDiv.style.transform = "";
+          }
+        }, 4000);
+      }, 1200);
+    }
+    
+    // RESIZE EVENT: to keep No button inside view if it's stationary, but if moving is enabled we let random movements keep it inside anyway.
+    // but if window resize, ensure button not out-of-bounds while moving enabled? we do nothing special for user comfort, but we can optionally relocate if out of bounds.
+    function ensureButtonInBounds() {
+      if (!noBtn) return;
+      const rect = noBtn.getBoundingClientRect();
+      const btnW = rect.width;
+      const btnH = rect.height;
+      let newLeft = parseFloat(noBtn.style.left);
+      let newTop = parseFloat(noBtn.style.top);
+      let changed = false;
+      if (isNaN(newLeft)) return;
+      if (newLeft + btnW > window.innerWidth - 5) {
+        newLeft = window.innerWidth - btnW - 10;
+        changed = true;
+      }
+      if (newLeft < 5) {
+        newLeft = 5;
+        changed = true;
+      }
+      if (newTop + btnH > window.innerHeight - 5) {
+        newTop = window.innerHeight - btnH - 10;
+        changed = true;
+      }
+      if (newTop < 5) {
+        newTop = 5;
+        changed = true;
+      }
+      if (changed && !movingEnabled) {
+        noBtn.style.left = newLeft + "px";
+        noBtn.style.top = newTop + "px";
+      } else if (changed && movingEnabled) {
+        // if moving still enabled, but maybe a resize made it stuck? just reposition gently
+        noBtn.style.left = newLeft + "px";
+        noBtn.style.top = newTop + "px";
+      }
+    }
+    
+    // Add stars and hearts background (based on celestial valentine theme)
+    function generateCosmicBackground() {
+      const bgContainer = document.getElementById('magicBg');
+      const symbols = ['✨', '⭐', '🌟', '💖', '💘', '🌙', '☁️', '🪄', '🌸', '🎀'];
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement('div');
+        el.classList.add(i % 3 === 0 ? 'heart' : 'star');
+        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        el.innerHTML = symbol;
+        const size = Math.random() * 24 + 12;
+        el.style.fontSize = size + 'px';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = Math.random() * 100 + '%';
+        el.style.animationDuration = Math.random() * 10 + 5 + 's';
+        el.style.animationDelay = Math.random() * 5 + 's';
+        el.style.opacity = Math.random() * 0.6 + 0.2;
+        bgContainer.appendChild(el);
+      }
+    }
+    
+    // Event binding for No button (both touch and mouse)
+    function bindEvents() {
+      // movement triggers
+      noBtn.addEventListener('mouseenter', onEscapeAction);
+      noBtn.addEventListener('click', (e) => {
+        // if movingEnabled true -> move away and do NOT reveal yes
+        if (movingEnabled) {
+          e.preventDefault();
+          moveButtonRandomly();
+          // add a little "boing" text effect
+          noBtn.style.transform = "scale(0.96)";
+          setTimeout(() => { if(noBtn) noBtn.style.transform = ""; }, 150);
+          return;
+        } 
+        // else timer ended: this is final click!
+        if (!movingEnabled && !yesRevealed) {
+          e.preventDefault();
+          revealYesButton();
+        } else if (!movingEnabled && yesRevealed) {
+          // already revealed, maybe no action needed
+        }
+      });
+      
+      // also touchstart for mobile devices (makes it mobile-friendly)
+      noBtn.addEventListener('touchstart', (e) => {
+        if (movingEnabled) {
+          e.preventDefault();
+          moveButtonRandomly();
+          noBtn.style.transform = "scale(0.96)";
+          setTimeout(() => { if(noBtn) noBtn.style.transform = ""; }, 150);
+          return;
+        } else if (!movingEnabled && !yesRevealed) {
+          e.preventDefault();
+          revealYesButton();
+        }
+      });
+      
+      // Yes button redirect to next.html
+      yesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // playful effect before redirect
+        yesBtn.style.transform = "scale(0.95)";
+        surpriseDiv.innerHTML = "💫 Redirecting to next page... ✨💖";
+        setTimeout(() => {
+          window.location.href = "index1.html";
+        }, 200);
+      });
+      
+      // On window resize, ensure button stays within view (especially after timer)
+      window.addEventListener('resize', () => {
+        if (!movingEnabled) {
+          ensureButtonInBounds();
+        } else {
+          // if still moving, but could be out of bounds due to resize, slightly adjust without movement logic
+          const rect = noBtn.getBoundingClientRect();
+          const maxL = window.innerWidth - rect.width;
+          const maxT = window.innerHeight - rect.height;
+          let currLeft = parseFloat(noBtn.style.left);
+          let currTop = parseFloat(noBtn.style.top);
+          if (currLeft > maxL) noBtn.style.left = Math.max(5, maxL - 5) + "px";
+          if (currTop > maxT) noBtn.style.top = Math.max(5, maxT - 5) + "px";
+          if (currLeft < 5) noBtn.style.left = "8px";
+          if (currTop < 5) noBtn.style.top = "8px";
+        }
+      });
+    }
+    
+    // additional fun interactive: if user tries to click yes before reveal it's hidden but no need
+    // after 30 seconds, show extra reminder
+    function addTimerEndVisual() {
+      // already in interval but we also add extra feedback when timer ends
+      const checkTimerEnd = setInterval(() => {
+        if (!movingEnabled && timerSeconds === 0 && !yesRevealed) {
+          // make No button bounce gently
+          noBtn.style.animation = "gentleWobble 0.5s";
+          setTimeout(() => { if(noBtn) noBtn.style.animation = ""; }, 500);
+          clearInterval(checkTimerEnd);
+        }
+      }, 500);
+    }
+    
+    // initialization
+    function init() {
+      generateCosmicBackground();
+      setInitialNoPosition();
+      startCountdown();
+      bindEvents();
+      showInitialHint();
+      addTimerEndVisual();
+      // predefine style for no button
+      noBtn.style.willChange = "left, top";
+      // additional random movement for fun - but we only move on hover/click
+      // ensure yes hidden
+      yesContainer.style.display = "none";
+      surpriseDiv.innerHTML = "";
+      // optional: for first 3 secs, make no button wiggle attract attention
+      setTimeout(() => {
+        if (movingEnabled) {
+          noBtn.style.animation = "gentleWobble 0.4s";
+          setTimeout(() => { if(noBtn) noBtn.style.animation = ""; }, 400);
+        }
+      }, 800);
+    }
+    
+    init();
+  })();
+</script>
+</body>
+</html>

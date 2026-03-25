@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Panels · Valentine Twitch style + falling candies</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 30%, #ffd0e4, #e3c4ff, #fbc2eb);
+      background-attachment: fixed;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 2rem 1rem;
+    }
+
+    /* floating hearts & sparkles container (js will fill) */
+    #floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* falling candies container (taddy dropping) */
+    #falling-candies {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2; /* just above hearts, below panels */
+      overflow: hidden;
+    }
+
+    .candy {
+      position: absolute;
+      font-size: 2rem;
+      user-select: none;
+      filter: drop-shadow(0 0 6px #ffa5d0);
+      animation: fall linear infinite;
+      will-change: transform;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    /* main content above floating decor */
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 1400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 3.2rem;
+      font-weight: 400;
+      background: linear-gradient(135deg, #b34180, #6b3f87);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.5), 0 0 40px #f8c3f8;
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      font-weight: 300;
+      background: rgba(255, 240, 245, 0.4);
+      backdrop-filter: blur(4px);
+      display: inline-block;
+      padding: 0.5rem 2rem;
+      border-radius: 60px;
+      color: #6d3b6d;
+      box-shadow: 0 0 20px #ffc0cb, 0 4px 10px rgba(255, 192, 203, 0.3);
+      margin-bottom: 3rem;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .subtitle i {
+      color: #ff3388;
+      margin: 0 6px;
+    }
+
+    /* panels grid – exactly 320x300 per card */
+    .panels-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.8rem;
+    }
+
+    .panel {
+      width: 320px;
+      height: 300px;
+      background: rgba(255, 250, 250, 0.2);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 30px;
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 15px 35px rgba(255, 150, 200, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.5) inset, 0 0 20px #ffa5c3;
+      padding: 1.2rem 1.3rem;
+      position: relative;
+      overflow: hidden;         /* keeps pseudo-hearts inside, but they are subtle */
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      color: #3f2b3f;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* hover glow + lift */
+    .panel:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px #ffa5d0, 0 0 0 3px rgba(255, 255, 255, 0.8) inset, 0 0 40px #f080c0;
+    }
+
+    /* heart decoration inside panel (subtle) */
+    .panel::before {
+      content: "❤️";
+      position: absolute;
+      bottom: 12px;
+      right: 15px;
+      font-size: 3.2rem;
+      opacity: 0.1;
+      transform: rotate(10deg);
+      pointer-events: none;
+      z-index: 0;
+      filter: drop-shadow(0 0 4px hotpink);
+    }
+
+    .panel::after {
+      content: "✨";
+      position: absolute;
+      top: 12px;
+      left: 15px;
+      font-size: 2.5rem;
+      opacity: 0.15;
+      transform: rotate(-10deg);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* panel header with heart icon */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.9rem;
+      border-bottom: 1px dashed rgba(255, 105, 180, 0.5);
+      padding-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #992266;
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-header i {
+      color: #ff4080;
+      text-shadow: 0 0 10px #ffb6c1, 0 0 20px #ff69b4;
+      font-size: 1.6rem;
+    }
+
+    .panel-content {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      overflow-y: auto;        /* just in case, but text fits */
+      padding-right: 0.2rem;
+      color: #3a1f3a;
+      position: relative;
+      z-index: 2;
+      scrollbar-width: thin;
+      scrollbar-color: #ffa0c5 #ffe4ec;
+    }
+
+    .panel-content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .panel-content::-webkit-scrollbar-track {
+      background: #ffe4ec;
+      border-radius: 10px;
+    }
+
+    .panel-content::-webkit-scrollbar-thumb {
+      background: #ffa0c5;
+      border-radius: 10px;
+    }
+
+    .panel-content p {
+      margin-bottom: 0.6rem;
+    }
+
+    .panel-content i.fa-sparkles, 
+    .panel-content i.fa-heart {
+      margin: 0 2px;
+      color: #ff3388;
+    }
+
+    .small-heart {
+      color: #ff66a5;
+      font-size: 0.9rem;
+      margin: 0 2px;
+    }
+
+    /* little sparkle inside text */
+    .spark {
+      display: inline-block;
+      animation: twinkle 2s infinite;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* floating elements animation */
+    @keyframes float-bob {
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      50% { transform: translateY(-20px) rotate(8deg) scale(1.05); }
+      100% { transform: translateY(0px) rotate(-5deg) scale(1); }
+    }
+
+    /* responsive grid */
+    @media (max-width: 720px) {
+      .panels-grid {
+        gap: 1.2rem;
+      }
+      h1 { font-size: 2.5rem; }
+      .subtitle { font-size: 1rem; }
+    }
+        /* ===== MEMORY TRAIN SECTION – MODULAR STYLES ===== */
+        .memory-train-section {
+            position: relative;
+            width: 100%;
+            height: 320px;                /* fixed height for easy insertion */
+            
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.05);
+            margin: 0;                     /* remove default margins */
+            padding: 0;
+            isolation: isolate;
+        }
+
+        /* ground line (simple) */
+        .memory-train-section::after {
+            content: '';
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: #7a5a3e;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        /* train wrapper – hides overflow & contains absolute train */
+        .train-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* the moving train (flex row, absolute) */
+        .train {
+            position: absolute;
+            bottom: 30px;                  /* sits just above ground line */
+            left: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 8px;
+            width: max-content;
+            will-change: left;
+            /* UPDATED: right to left animation */
+            animation: journey 22s linear infinite;
+            z-index: 10;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+        }
+
+        /* RIGHT→LEFT journey */
+        @keyframes journey {
+            0%   { left: 100%; }           /* start fully right off screen */
+            100% { left: -100%; }           /* end fully left off screen */
+        }
+
+        /* ----- common wagon & engine styles ----- */
+        .engine, .wagon {
+            position: relative;
+            background: #4f3f2e;            /* base wood/coal color */
+            border-radius: 18px 18px 8px 8px;
+            box-shadow: 0 6px 0 #2f241b, 0 10px 12px rgba(0,0,0,0.25);
+            transition: all 0.2s;
+        }
+
+        /* engine specific */
+        .engine {
+            background: #3b4b5e;             /* metallic blue-gray */
+            width: 200px;
+            height: 120px;
+            border-radius: 30px 20px 12px 12px;
+            box-shadow: 0 8px 0 #1f2a33, 0 12px 18px rgba(0,0,0,0.3);
+        }
+
+        /* wagon (bogie) */
+        .wagon {
+            width: 170px;
+            height: 110px;
+            background: #8b6c4d;             /* wooden wagon */
+            box-shadow: 0 6px 0 #5e432e, 0 8px 12px rgba(0,0,0,0.25);
+        }
+
+        /* ----- photo frames inside wagons ----- */
+        .photo-frame {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 4px;
+            height: 60px;
+            background: #f7e9d7;
+            border-radius: 20px 8px 20px 8px;  /* playful asymmetric roundness */
+            border: 4px solid #ecce9e;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+            border-radius: 16px 4px 16px 4px;   /* matches frame inner shape */
+        }
+
+        /* hover effect: zoom + warm glow */
+        .photo-frame:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 22px #ffb347, 0 8px 12px rgba(0,0,0,0.3);
+            border-color: #ffc857;
+            transition: 0.25s;
+        }
+
+        .photo-frame:hover img {
+            transform: scale(1.1);
+        }
+
+        /* ----- wheels (common) ----- */
+        .wheels {
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 12px;
+            box-sizing: border-box;
+            z-index: 20;
+        }
+
+        .wheel {
+            width: 36px;
+            height: 36px;
+            background: #2b2b2b;
+            border-radius: 50%;
+            border: 4px solid #5e5e5e;
+            box-shadow: 0 4px 0 #111, inset 0 -2px 4px #aaa;
+            animation: roll 0.6s linear infinite;
+            transform-origin: center;
+        }
+
+        /* rotation animation */
+        @keyframes roll {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ----- engine details (cab, smokestack, smoke) ----- */
+        .engine-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .window {
+            position: absolute;
+            top: 25px;
+            left: 35px;
+            width: 40px;
+            height: 28px;
+            background: #a3d0f0;
+            border-radius: 12px 4px 12px 4px;
+            border: 3px solid #2f4f6f;
+            box-shadow: inset -2px -2px 5px #2b4b6e;
+        }
+
+        .smokestack {
+            position: absolute;
+            top: -25px;
+            left: 65px;
+            width: 28px;
+            height: 40px;
+            background: #3a3a3a;
+            border-radius: 10px 10px 4px 4px;
+            border-bottom: 4px solid #222;
+            z-index: 15;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -50px;
+            left: 55px;
+            width: 80px;
+            height: 50px;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        .puff {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 60% 40% 70% 30%;
+            filter: blur(4px);
+            animation: puff 2.2s infinite ease-out;
+            opacity: 0.7;
+        }
+
+        .puff1 {
+            width: 28px;
+            height: 22px;
+            bottom: 0;
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .puff2 {
+            width: 35px;
+            height: 28px;
+            bottom: 8px;
+            left: 20px;
+            animation-delay: 0.7s;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .puff3 {
+            width: 30px;
+            height: 24px;
+            bottom: 2px;
+            left: 45px;
+            animation-delay: 1.3s;
+            background: rgba(230, 230, 255, 0.9);
+        }
+
+        @keyframes puff {
+            0% {
+                transform: scale(0.4) translateX(0) translateY(0);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1.8) translateX(30px) translateY(-35px);
+                opacity: 0;
+            }
+        }
+
+        /* extra decor on wagons (roof) */
+        .wagon::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            width: 70%;
+            height: 14px;
+            background: #b59162;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 -2px 4px #4f3f2e;
+        }
+
+        /* ----- responsive adjustments ----- */
+        @media (max-width: 650px) {
+            .memory-train-section {
+                height: 260px;
+            }
+
+            .engine {
+                width: 160px;
+                height: 100px;
+            }
+
+            .wagon {
+                width: 140px;
+                height: 95px;
+            }
+
+            .photo-frame {
+                height: 50px;
+                top: 12px;
+                left: 10px;
+                right: 10px;
+            }
+
+            .wheel {
+                width: 28px;
+                height: 28px;
+                border-width: 3px;
+            }
+
+            .wheels {
+                bottom: -12px;
+            }
+
+            .smokestack {
+                width: 22px;
+                height: 30px;
+                left: 55px;
+                top: -20px;
+            }
+
+            .smoke {
+                top: -45px;
+                left: 45px;
+            }
+
+            .puff {
+                filter: blur(3px);
+            }
+
+            .puff1 { width: 20px; height: 18px; }
+            .puff2 { width: 26px; height: 22px; }
+            .puff3 { width: 22px; height: 18px; }
+        }
+
+        @media (max-width: 450px) {
+            .engine {
+                width: 130px;
+                height: 85px;
+            }
+            .wagon {
+                width: 120px;
+                height: 80px;
+            }
+            .photo-frame {
+                height: 42px;
+            }
+            .window {
+                width: 30px;
+                height: 20px;
+                left: 20px;
+            }
+        }
+
+        /* small touch: front light */
+        .engine::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 35px;
+            width: 18px;
+            height: 18px;
+            background: #f5e56b;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #fff9b0;
+            border: 2px solid #c9a83b;
+        }
+        /* IMAGE POPUP / LIGHTBOX STYLE */
+
+.image-popup{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  opacity:0;
+  pointer-events:none;
+  transition:0.3s;
+}
+
+.image-popup.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.popup-img{
+  max-width:90%;
+  max-height:85%;
+  border-radius:15px;
+  box-shadow:0 0 40px rgba(255,255,255,0.3);
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn{
+  from{
+    transform:scale(0.7);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.close-popup{
+  position:absolute;
+  top:25px;
+  right:40px;
+  font-size:40px;
+  color:white;
+  cursor:pointer;
+}
+/*train ka picha button */
+.train-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:60px;
+  padding:0 25px;
+  background:linear-gradient(45deg,#ff4fa3,#ff7ac3);
+  color:white;
+  font-weight:600;
+  text-decoration:none;
+  border-radius:40px;
+  margin-left:20px;
+  align-self:center;
+  box-shadow:0 0 15px rgba(255,105,180,0.6);
+  transition:0.3s;
+  white-space:nowrap;
+}
+
+.train-btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 25px hotpink;
+}
+
+
+  </style>
+</head>
+<body>
+  <!-- IMAGE POPUP / LIGHTBOX -->
+<div id="imagePopup" class="image-popup">
+  <span class="close-popup">&times;</span>
+  <img class="popup-img" id="popupImg">
+</div>
+  <!-- fixed container for floating hearts & sparkles (romantic) -->
+  <div id="floating-elements"></div>
+
+  <!-- falling candies container – "taddy dropping from upward" -->
+  <div id="falling-candies"></div>
+
+  <div class="container">
+    <h1>Happy Birthday Panels</h1>
+    <div class="subtitle">
+      <i class="fas fa-heart"></i> 320 x 300 px Birthday Wishes Panels Template <i class="fas fa-heart"></i>
+    </div>
+
+    <!-- 4 panels grid -->
+    <div class="panels-grid">
+      <!-- panel 1 - Birthday Wishes -->
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-heart"></i> Birthday Wishes
+        </div>
+        <div class="panel-content">
+          <p><i class="fas fa-sparkles small-heart"></i> Happy birthday to you! 🎂 May your day sparkle with joy, laughter, and sweet surprises.</p>
+          <p><i class="fas fa-heart small-heart"></i> Wishing you endless happiness, success, and lots of cake! <i class="fas fa-sparkles small-heart"></i></p>
+          <p>✨ Another year of being amazing — enjoy every moment!</p>
+        </div>
+      </div>
+
+      <!-- panel 2 - About the Birthday Star -->
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-heart"></i> About the Birthday Star
+        </div>
+        <div class="panel-content">
+          <p><i class="fas fa-star small-heart"></i> <strong>Meet Taylor</strong> – cat parent, sushi lover, and forever dancer.</p>
+          <p><i class="fas fa-heart small-heart"></i> Favorite hobby: painting galaxies. Secret talent: baking cookies.</p>
+          <p>💫 Always laughing, always dreaming. Born to shine!</p>
+        </div>
+      </div>
+
+      <!-- panel 3 - Fun & Celebration -->
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-heart"></i> Fun & Celebration
+        </div>
+        <div class="panel-content">
+          <p><i class="fas fa-cake-candles small-heart"></i> Cake pops, party hats, and happy chaos! Let's dance like nobody's watching.</p>
+          <p>🎶 Friends, music, and sparkles — today is pure magic. <i class="fas fa-sparkles small-heart"></i></p>
+          <p>🥳 Make a wish and blow the candles! Woohoo!</p>
+        </div>
+      </div>
+
+      <!-- panel 4 - Goals & Dreams -->
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fas fa-heart"></i> Goals & Dreams
+        </div>
+        <div class="panel-content">
+          <p><i class="fas fa-sparkles small-heart"></i> May the year ahead bring epic adventures, success, and beautiful moments.</p>
+          <p>🌟 Dream big — the future is full of love and light. All wishes come true!</p>
+          <p><i class="fas fa-heart small-heart"></i> Happiness, health, and everything your heart desires.</p>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ===== MEMORY TRAIN SECTION – COPY-PASTE READY (RIGHT TO LEFT) ===== -->
+    <section class="memory-train-section">
+        <div class="train-wrapper">
+            <div class="train">
+                <!-- LOCOMOTIVE (engine) with smoke & wheels -->
+                <div class="engine">
+                    <div class="engine-body">
+                        <div class="window"></div>
+                        <div class="smokestack"></div>
+                        <div class="smoke">
+                            <div class="puff puff1"></div>
+                            <div class="puff puff2"></div>
+                            <div class="puff puff3"></div>
+                        </div>
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+
+                <!-- WAGON 1 – mountain memory -->
+                <div class="wagon">
+                    <div class="photo-frame">
+                        <img src="img/5.jpeg" alt="Mountain lake memory" loading="lazy">
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+
+                <!-- WAGON 2 – forest memory -->
+                <div class="wagon">
+                    <div class="photo-frame">
+                        <img src="img/4.jpeg" alt="Forest waterfall memory" loading="lazy">
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+
+                <!-- WAGON 3 – vintage memory -->
+                <div class="wagon">
+                    <div class="photo-frame">
+                        <img src="img/3.jpeg" alt="Flower field memory" loading="lazy">
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+
+                <!-- WAGON 4 – travel memory -->
+                <div class="wagon">
+                    <div class="photo-frame">
+                        <img src="img/1.jpeg" alt="Mountain road memory" loading="lazy" >
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+
+                <!-- extra tiny wagon for cuteness (optional, still carries photo) -->
+                <div class="wagon">
+                    <div class="photo-frame">
+                        <img src="img/2.jpeg" alt="Evening nature memory" loading="lazy" >
+                    </div>
+                    <div class="wheels">
+                        <div class="wheel"></div>
+                        <div class="wheel"></div>
+                    </div>
+                </div>
+                <a href="go.html" class="train-btn">Next Page ➜</a>
+            </div> <!-- end train -->
+        </div> <!-- end train-wrapper -->
+
+        <!-- subtle extra ground shadow (optional) -->
+        <div style="position: absolute; bottom: 20px; left: 0; width:100%; height:12px; background: radial-gradient(circle at 50% 0%, #603f1e, transparent 80%); opacity:0.3; z-index:5;"></div>
+    </section>
+  </div>
+
+ 
+  
+
+  <!-- script for floating hearts & sparkles (existing) + new falling candies -->
+  <script>
+    (function() {
+      // ---- existing floating hearts/sparkles ----
+      const floatingContainer = document.getElementById('floating-elements');
+      const icons = ['fa-heart', 'fa-sparkles', 'fa-heart', 'fa-star', 'fa-heart'];
+      const colors = ['#ff99cc', '#ffb3c6', '#e0b0ff', '#faa0c0', '#d9b0ff', '#ffc0cb', '#f7b0f7'];
+
+      for (let i = 0; i < 35; i++) {
+        const el = document.createElement('i');
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+        el.className = `fas ${randomIcon}`;
+
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const size = Math.floor(Math.random() * 32) + 16;
+        const opacity = Math.random() * 0.4 + 0.2;
+        const animDuration = Math.random() * 10 + 8;
+        const animDelay = Math.random() * 5;
+        const rotate = Math.random() * 30 - 15;
+
+        el.style.position = 'absolute';
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        el.style.fontSize = size + 'px';
+        el.style.color = colors[Math.floor(Math.random() * colors.length)];
+        el.style.opacity = opacity;
+        el.style.transform = `rotate(${rotate}deg)`;
+        el.style.animation = `float-bob ${animDuration}s infinite ease-in-out`;
+        el.style.animationDelay = animDelay + 's';
+        el.style.filter = 'drop-shadow(0 0 5px hotpink)';
+        el.style.willChange = 'transform';
+
+        floatingContainer.appendChild(el);
+      }
+
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('i');
+        heart.className = 'fas fa-heart';
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const size = Math.floor(Math.random() * 18) + 8;
+        heart.style.position = 'absolute';
+        heart.style.left = left + '%';
+        heart.style.top = top + '%';
+        heart.style.fontSize = size + 'px';
+        heart.style.color = '#ffb3d9';
+        heart.style.opacity = 0.25;
+        heart.style.animation = `float-bob ${Math.random() * 12 + 7}s infinite alternate`;
+        heart.style.animationDelay = Math.random() * 4 + 's';
+        floatingContainer.appendChild(heart);
+      }
+
+      // ---- NEW: falling candies (taddy dropping from upward) ----
+      const candyContainer = document.getElementById('falling-candies');
+      // candy emojis: 🍬 wrapped candy, 🍭 lollipop, 🍫 chocolate, 🍪 cookie, 🍡 dango (cute)
+      const candyEmojis = ['🍬', '🍭', '🍫', '🍪', '🍡', '🧁', '🍰']; // mix of sweets
+      const numCandies = 40; // plenty falling
+
+      for (let i = 0; i < numCandies; i++) {
+        const candy = document.createElement('div');
+        candy.className = 'candy';
+        // random emoji
+        candy.textContent = candyEmojis[Math.floor(Math.random() * candyEmojis.length)];
+        
+        // random size between 1.2rem and 3rem
+        const size = Math.random() * 1.8 + 1.2; // rem
+        candy.style.fontSize = size + 'rem';
+        
+        // random left position (0% to 100%)
+        candy.style.left = Math.random() * 100 + '%';
+        
+        // random animation duration between 5s and 14s
+        const duration = Math.random() * 9 + 5;
+        candy.style.animationDuration = duration + 's';
+        
+        // random delay so they don't all start together
+        candy.style.animationDelay = Math.random() * 8 + 's';
+        
+        // slight rotation variation
+        candy.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+        
+        // random opacity between 0.5 and 0.9
+        candy.style.opacity = Math.random() * 0.4 + 0.5;
+        
+        // add a bit of blur variation for depth
+        if (Math.random() > 0.7) {
+          candy.style.filter = 'blur(1px) drop-shadow(0 0 4px #ff80b0)';
+        } else {
+          candy.style.filter = 'drop-shadow(0 0 6px #ffb3d9)';
+        }
+        
+        candyContainer.appendChild(candy);
+      }
+    })();
+    // IMAGE POPUP SCRIPT
+
+const popup = document.getElementById("imagePopup");
+const popupImg = document.getElementById("popupImg");
+const images = document.querySelectorAll(".photo-frame img");
+const closeBtn = document.querySelector(".close-popup");
+
+images.forEach(img=>{
+  img.addEventListener("click",()=>{
+    popup.classList.add("active");
+    popupImg.src = img.src;
+  });
+});
+
+closeBtn.onclick = () =>{
+  popup.classList.remove("active");
+}
+
+popup.onclick = (e)=>{
+  if(e.target === popup){
+    popup.classList.remove("active");
+  }
+}
+  </script>
+
+  <!-- small additional decor -->
+  <div style="position: fixed; bottom: 10px; right: 20px; opacity: 0.2; font-size: 3rem; pointer-events: none; z-index: 0;">❤️✨</div>
+  <div style="position: fixed; top: 20px; left: 20px; opacity: 0.15; font-size: 4rem; pointer-events: none; z-index: 0; transform: rotate(-15deg);">✨❤️</div>
+
+</body>
+</html>
