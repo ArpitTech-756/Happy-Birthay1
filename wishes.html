@@ -308,7 +308,7 @@
             align-items: flex-end;
             gap: 8px;
             width: max-content;
-            will-change: left;
+            will-change: transform;
             /* UPDATED: right to left animation */
             animation: journey 22s linear infinite;
             z-index: 10;
@@ -891,9 +891,9 @@
       const candyContainer = document.getElementById('falling-candies');
       // candy emojis: 🍬 wrapped candy, 🍭 lollipop, 🍫 chocolate, 🍪 cookie, 🍡 dango (cute)
       const candyEmojis = ['🍬', '🍭', '🍫', '🍪', '🍡', '🧁', '🍰']; // mix of sweets
-      const numCandies = 40; // plenty falling
+      const numCandies = 20; // plenty falling
 
-      for (let i = 0; i < numCandies; i++) {
+      for (let i = 0; i < 20; i++) {
         const candy = document.createElement('div');
         candy.className = 'candy';
         // random emoji
