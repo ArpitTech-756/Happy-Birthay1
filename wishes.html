@@ -674,7 +674,37 @@
   transform:scale(1.1);
   box-shadow:0 0 25px hotpink;
 }
+/*music card ha utkarsh ka */
+.music-card {
+  width: 320px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(255,105,180,0.4);
+  border: 1px solid white;
+}
 
+.music-card h2 {
+  margin-bottom: 15px;
+  color: #b34180;
+}
+
+.music-card button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(45deg,#ff4fa3,#ff7ac3);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.music-card button:hover {
+  transform: scale(1.1);
+}
 
   </style>
 </head>
@@ -746,6 +776,18 @@
         </div>
       </div>
     </div>
+
+     <div class="music-card">
+  <h2>Utkarsh bhaiya</h2>
+  
+  <audio id="bgMusic" autoplay loop>
+    <source src="voice.mp3" type="audio/mpeg">
+    Your browser does not support audio
+  </audio>
+  <p>This lyrics tell about brother and sister love</p>
+
+  
+</div>
  
     <!-- ===== MEMORY TRAIN SECTION – COPY-PASTE READY (RIGHT TO LEFT) ===== -->
     <section class="memory-train-section">
